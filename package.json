@@ -1,0 +1,15 @@
+{
+  "name": "sodv1201_phase1_ankool",
+  "version": "1.0.0",
+  "main": "index_main.js",
+  "scripts": {
+    "start": "node script_A2.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "description": ""
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+    
+    <title>Co-Worker Project</title>
+
+</head>
+<body>
+
+  <header>
+    <h1>CO - WORKERS</h1>
+    <nav id ="navbar">
+       
+      </nav>
+</header>
+
+    <section class = "main">
+        <h2>Add Property</h2>
+        <form action = "/newProperty" method = "POST">
+          <input type="hidden" id="owner" name="owner" value="">
+          <input type="hidden" id="idnum" name="idnum" value="">
+         
+            <label>Address</label>
+            <input name = "address" type="text" placeholder="Enter the address" id="property-address"/>
+         
+            <label >Neighborhood</label>
+            <input name = "neighborhood" type="text"  placeholder="Enter the neighborhood" id="property-neighborhood"/>
+          
+            <label>Square-Feet</label>
+            <input name="squarefeet" type="number" placeholder="Enter the square-Feet" id="property-square-feet"/>
+          
+         
+              <input name ="parking" type="radio"  id="property-parking"/>
+              <label >Parking is available</label>
+            
+        
+       
+              <input name ="transport" type="radio"  id="property-transportation"/>
+              <label >Public Transport is accessible</label>
+           
+         
+            
+              <input name = "visibility" type="radio"  id="property-visibility"/>
+              <label >View workspaces</label>
+           
+          
+            <button id="b3">Add</button>
+          
+        </form>
+      </section>
+
+    <footer>
+      <p id = dateTime></p>
+        &copy; 2020, Co-Workers : Made by Ankool Kaur.
+    </footer>
+
+      <script src="properties_addition.js"></script>
+
+</body>
+</html>

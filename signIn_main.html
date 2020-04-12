@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+    
+    <title>Document</title>
+
+</head>
+<body>
+
+    <header>
+        <h1>CO - WORKERS</h1>
+        <nav id ="navbar">
+          </nav>
+    </header>
+
+    <section class="main">
+        <h3>Sign Up</h3>
+        <form action = "/register" method = "POST">
+
+         <label for ="naming">Name</label>
+         <input type="text" name="name" id="sign-up" placeholder = "enetr your full name"/>
+
+         <label for="naming">Phone Number</label>
+        <input type="number" name="phoneNumber" id="sign-up-number" placeholder = "phone number"/>
+
+        <label for = "naming">Email Id</label>
+        <input type ="text" name="email" placeholder="enter your email address" id="email-in"/>
+
+        <label for ="pswd">Password</label>
+        <input type = "password" name="password" placeholder="enter your password" id ="password-in"/>
+
+        <label for = "naming">Role</label>
+        <div>
+            <input type = "checkbox" name = "role" value = "owner" id="ocheck"/>
+            Owner
+            <input type = "checkbox" name = "role" value = "Co-Worker" id="ccheck"/>
+            Co-Worker      
+        </div>
+
+         <div>
+            <button id = "signUp">SignUp</button>
+        </div>
+
+        </form>
+    </section>
+
+    <footer>
+        <p id = dateTime></p>
+        &copy; 2020, Co-Workers : Made by Ankool Kaur.
+    </footer>
+    <script src="script_Ankool.js"></script>
+</body>
+</html>

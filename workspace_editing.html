@@ -1,0 +1,227 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+    
+  </head>
+  <body>
+
+    <header>
+        <h1>CO - WORKERS</h1>
+        <nav id ="navbar">
+           
+          </nav>
+    </header>
+
+      <section class="main">
+        <h3>Edit Workspace</h3>
+        <form action = "/updateWork" method = "POST">
+          <input type="hidden" id="owner" name="owner" value="">
+          <input type="hidden" id="idnum" name="idnum" value="">
+          <input type="hidden" id="idnum2" name="idnum2" value="">
+          <label for="name">Workspace Name</label>
+          <input type="text" name="name" placeholder="Workspace Name" id="name"/>
+
+          <label for="type">Type</label>
+          <select name="type" id="workspace">
+            <option value="Meeting Room">Meeting Room</option>
+            <option value="Private Office Room">Private Office Room</option>
+            <option value="Open Area Desk">Open Area Desk</option>
+          </select>
+        
+          <label for="seating-capacity">Seating Capacity</label>
+          <input type="number" name="seating" placeholder="Seating Capacity" id="workspace-seating-capacity"/>
+        
+          <label for="availibility-date">Availibility Date</label>
+          <input type="text" name="availibility" placeholder="Availibility Date [DD/MM/YYYY]" id="workspace-availibility-date"/>
+        
+          <label for="lease-term">Lease Term</label>
+          
+            <input type="number" name="leaseTerm" placeholder="Lease Term" id ="term" style="width: 120px"/>
+            <select name="lease" id="leaseType">
+            
+              <option value="Day">Day</option>
+              <option value="Week">Week</option>
+              <option value="Month">Month</option>
+            </select>
+          
+          <label for="price">Price</label>
+          <input type="number" name="price" placeholder="Price" id="workspace-price"/>
+       
+            <input type="radio" name="smoking" id="workspace-smoking" />
+            <label for="smoking">Smoking Allowance</label>
+        
+                      
+            <input type="radio" name="visibility" id="workspace-visibility"/>
+            <label for="visibility">Show in listings</label>
+            <button id = "b7">Update</button>
+ 
+
+        </form>
+      </section>
+  
+
+    <footer>
+      <p id = dateTime></p>
+        &copy; 2020, Co-Workers : Made by Ankool Kaur.
+    </footer>
+
+    <script>
+      window.onload = showTime();
+      function showTime(){
+      let time = new Date().toLocaleTimeString();
+      let date = new Date().toLocaleDateString()
+      document.getElementById("dateTime").innerHTML = time + " " + date
+      setTimeout(showTime, 100);
+      };
+
+      function getLogin(url) {
+  return new Promise((resolve, reject) => {
+      return fetch(url).then(function(response) {
+          const json = response.json();
+          if (json) {
+              resolve(json);
+          } 
+          else {
+              reject({ message: "Error" });
+          }
+      });
+  });
+}
+
+      const b7 = document.getElementById("b7");
+      const urlText = new URLSearchParams(window.location.search);
+      const name = urlText.get('name');
+      const type = urlText.get('type');
+      const seating = urlText.get('seating');
+      const availibility = urlText.get('availibility');
+      const leaseTerm = urlText.get('leaseTerm');
+      const leaseType = urlText.get('leaseType');
+      const price = urlText.get('price');
+      const smoking = urlText.get('smoking');
+      const visibility = urlText.get('visibility');
+
+      const namel = document.getElementById('name');
+      const typel = document.getElementById('leaseType');
+      const seatingl = document.getElementById('workspace-seating-capacity');
+      const availibilityl = document.getElementById('workspace-availibility-date');
+      const leaseTerml = document.getElementById('term');
+      const leaseTypel = document.getElementById('leaseType');
+      const pricel = document.getElementById('workspace-price');
+      const smokingl = document.getElementById('workspace-smoking');
+      const visibilityl = document.getElementById('workspace-visibility');
+
+
+      namel.value = name;
+      typel.value = type;
+      seatingl.value = seating;
+      availibilityl.value = availibility;
+      leaseTerml.value = leaseTerm;
+      leaseTypel.value = leaseType;
+      pricel.value = price;
+      smokingl.checked = smoking == 'true' ? true : false;
+      visibilityl.checked = visibility == 'true' ? true : false;
+
+      b7.addEventListener("click", () =>{
+        const name = document.getElementById('name').value;
+        const type = document.getElementById('type').value;
+        const seating = document.getElementById('seating-capacity').value;
+        const availibility = document.getElementById('availibility-date').value;
+        const leaseTerm = document.getElementById('lease-term').value;
+        const leaseType = document.getElementById('lease-type').value;
+        const price = document.getElementById('price').value;
+        const smoking = document.getElementById('smoking').checked;
+        const visibility = document.getElementById('visibility').checked;
+
+        if (
+          name == '' ||
+          type == undefined ||
+          seating == '' ||
+          availibility == '' ||
+          leaseTerm == '' ||
+          leaseType == undefined ||
+          price == ''
+        ) {
+          alert('Must enter all fields');
+        } else {
+          const date = new RegExp(
+            /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i
+          );
+          if (date.test(availibility)) {
+                success = true;
+              }
+            }
+            if (success) {
+              alert('Workspace Updated Successfully.');
+            } else {
+              alert('Error!');
+            }
+      });
+
+      function LoggedIn(data) {
+    if (Object.keys(data).length == 0) {
+      return false;
+    } else return true;
+  }
+  
+  function asOwner(data) {
+    if (data.role == 'owner') {
+      return true;
+    } else return false;
+  }
+  function asCoworker(data) {
+    if (data.role == 'Co-Worker') {
+      return true;
+    } else return false;
+  }
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+ function create(data) {
+  if (LoggedIn(data)) {
+    if (!asOwner(data)) {
+      window.location.href = 'index_main.html';
+    }
+  } else {
+    window.location.href = 'index_main.html';
+  }
+  if (LoggedIn(data)) {
+    if (asOwner(data)) {
+      navBar('Home', "/");
+      navBar('Add New', "/property_addition");
+      navBar('My Properties', "/properties_main");
+      navBar('My Workspaces', "/workspace_main");
+    } else {
+      navBar('Home', "/");
+      navBar('All Workspaces', "/workspace02_main");
+      navBar('search-area', '/find_main');
+    }
+    navBar('Sign Out', '/signOut_main');
+  } else {
+    navBar('Home', "/");
+    navBar('Signup', "/signIn_main");
+    navBar('Login', "/login_main");
+
+  }
+};
+getLogin("/user.json").then(data => {
+  login = data;
+  create(data)
+  document.getElementById("owner").value = data.email;
+  const urltext = new URLSearchParams(window.location.search);
+  document.getElementById("idnum").value = urltext.get('propertyId');
+  document.getElementById("idnum2").value = urltext.get('workspaceId');
+}).catch(err => {
+  console.error("error: ", err);
+});
+    </script>
+
+  </body>
+</html>

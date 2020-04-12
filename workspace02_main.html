@@ -1,0 +1,202 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+   
+  </head>
+  <body>
+
+    <header>
+      <h1>CO - WORKERS</h1>
+      <nav id ="navbar">  
+        </nav>
+  </header>
+
+    <main>
+      <section>
+        <h3>All Workspaces</h3>
+        <table id="table">
+          <tr id = 'r1'>
+            <th>Name</th>
+          </tr>
+          <tr id = 'r2'>
+            <th>Type</th>
+          </tr>
+          <tr id = 'r3'>
+            <th>Seating Capacity</th>
+          </tr>
+          <tr id = 'r4'>
+            <th>Availibility</th>
+          </tr>
+          <tr id = 'r5'>
+            <th>Lease Term</th>
+          </tr>
+          <tr id = 'r6'>
+            <th>Rate</th>
+          </tr>
+          <tr id = 'r7'>
+            <th>Smoking</th>
+          </tr>
+          <tr id = 'r8'>
+            <th>View</th>
+          </tr>
+        </table>
+      </section>
+    </main>
+
+    <footer>
+      <p id = dateTime></p>
+      &copy; 2020, Co-Workers : Made by Ankool Kaur.
+    </footer>
+
+    <script>
+      window.onload = showTime();
+      function showTime(){
+        let time = new Date().toLocaleTimeString();
+        let date = new Date().toLocaleDateString()
+        document.getElementById("dateTime").innerHTML = time + " " + date
+        setTimeout(showTime, 100);
+      };
+
+      function getLogin(url) {
+  return new Promise((resolve, reject) => {
+      return fetch(url).then(function(response) {
+          const json = response.json();
+          if (json) {
+              resolve(json);
+          } 
+          else {
+              reject({ message: "Error" });
+          }
+      });
+  });
+}
+
+getLogin("/workspaces.json").then(data => {
+  const workspaces = data
+      if (workspaces) {
+        myWorkspaces = workspaces.filter(function(workspace) {
+          if (workspace.visibility != undefined) {
+            return workspace;
+          }
+        });
+
+        for (i = 0; i < myWorkspaces.length; i++) {
+          const myWorkspace = myWorkspaces[i];
+          const table = document.getElementById('table');
+          const nameText = document.createTextNode(myWorkspace.name);
+          const typeText = document.createTextNode(myWorkspace.type);
+          const seatingText = document.createTextNode(myWorkspace.seating);
+          const availibilityText = document.createTextNode(myWorkspace.availibility);
+          const leaseText = document.createTextNode(`${myWorkspace.leaseTerm} ${myWorkspace.lease}${parseInt(myWorkspace.leaseTerm) > 1 ? 's' : ''}`);
+          const priceText = document.createTextNode(myWorkspace.price);
+          const smokingText = document.createTextNode(myWorkspace.smoking ? 'isAllowed' : 'isNotAllowed');
+          const name = document.createElement('td');
+          const type = document.createElement('td');
+          const seating = document.createElement('td');
+          const availibility = document.createElement('td');
+          const lease = document.createElement('td');
+          const price = document.createElement('td');
+          const smoking = document.createElement('td');
+          const showLink = document.createElement('td');
+          const link = document.createElement('a');
+          const linkText = document.createTextNode('View Details');
+          const r1 = document.getElementById('r1');
+          const r2 = document.getElementById('r2');
+          const r3 = document.getElementById('r3');
+          const r4 = document.getElementById('r4');
+          const r5 = document.getElementById('r5');
+          const r6 = document.getElementById('r6');
+          const r7 = document.getElementById('r7');
+          const r8 = document.getElementById('r8');
+          link.setAttribute('href',`workspace01_main.html?workspaceId=${myWorkspace.idnum2}&propertyId=${myWorkspace.idnum}`);
+          name.appendChild(nameText);
+          r1.appendChild(name);
+          type.appendChild(typeText);
+          r2.appendChild(type);
+          seating.appendChild(seatingText);
+          r3.appendChild(seating);
+          availibility.appendChild(availibilityText);
+          r4.appendChild(availibility);
+          lease.appendChild(leaseText);
+          r5.appendChild(lease);
+          price.appendChild(priceText);
+          r6.appendChild(price);
+          smoking.appendChild(smokingText);
+          r7.appendChild(smoking);
+          link.appendChild(linkText);
+          showLink.appendChild(link);
+          r8.appendChild(showLink);
+        }
+      }
+}).catch(err => {
+  console.error("error: ", err);
+});
+
+
+      
+
+      function LoggedIn(data) {
+    if (Object.keys(data).length == 0) {
+      return false;
+    } else return true;
+  }
+  
+  function asOwner(data) {
+    if (data.role == 'owner') {
+      return true;
+    } else return false;
+  }
+  function asCoworker(data) {
+    if (data.role == 'Co-Worker') {
+      return true;
+    } else return false;
+  }
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+function create(data) {
+  if (LoggedIn(data)) {
+  if (!asCoworker(data)) {
+    window.location.href = 'index_main.html';
+  }
+} else {
+  window.location.href = 'index_main.html';
+}
+  if (LoggedIn(data)) {
+    if (asOwner(data)) {
+      navBar('Home', "/");
+      navBar('Add New', "/property_addition");
+      navBar('My Properties', "/properties_main");
+      navBar('My Workspaces', "/workspace_main" + (JSON.parse(localStorage.getItem('user')).name));
+    } else {
+      navBar('Home', "/");
+      navBar('All Workspaces', "/workspace02_main");
+      navBar('search-area', "/find_main");
+    }
+    navBar('Sign Out', "/signOut_main");
+  } else {
+    navBar('Home', "/");
+    navBar('Signup', '/signIn_main');
+    navBar('Login', "/login_main");
+
+  }
+};
+getLogin("/user.json").then(data => {
+  login = data;
+  create(data)
+}).catch(err => {
+  console.error("error: ", err);
+});
+
+      
+    </script>
+  </body>
+</html>

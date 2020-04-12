@@ -1,0 +1,222 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+    
+  </head>
+  <body>
+    
+    <header>
+      <h1>CO - WORKERS</h1>
+      <nav id ="navbar">
+         
+        </nav>
+  </header>
+    <main>
+      <section class="workspace">
+        <h3>Details of Workspace</h3>
+
+        <div id="details"></div>
+        <hr />
+
+        <h3>Property Details</h3>
+        <div id="property-details"></div>
+        <hr />
+
+        <h3>Owner Details</h3>
+        <div id="owner-details"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p id = dateTime></p>
+      &copy; 2020, Co-Workers : Made by Ankool Kaur.
+    </footer>
+
+  </body>
+  <script>
+    window.onload = showTime();
+    function showTime(){
+      let time = new Date().toLocaleTimeString();
+      let date = new Date().toLocaleDateString()
+      document.getElementById("dateTime").innerHTML = time + " " + date
+      setTimeout(showTime, 100);
+    };
+
+    function getLogin(url) {
+  return new Promise((resolve, reject) => {
+      return fetch(url).then(function(response) {
+          const json = response.json();
+          if (json) {
+              resolve(json);
+          } 
+          else {
+              reject({ message: "Error" });
+          }
+      });
+  });
+}
+
+getLogin("/workspaces.json").then(data => {
+  getLogin("/properties.json").then(data2 => {
+    getLogin("/users.json").then(data3 => {
+  const urlText = new URLSearchParams(window.location.search);
+    const workspaceId = urlText.get('workspaceId');
+    const propertyId = urlText.get('propertyId');
+    const workspaces = data;
+    const properties = data2;
+    const users = data3;
+    const workspaceDetails = workspaces.filter(function(workspace) {
+      if (workspace.idnum2 == workspaceId) {
+        return workspace;
+      }
+    });
+    const propertyDetails = properties.filter(function(property) {
+      if (property.idnum == propertyId) {
+        return property;
+      }
+    });
+
+    const userDetails = users.filter(function(user) {
+      if (user.email == propertyDetails[0].owner) {
+        delete user.password;
+        return user;
+      }
+    });
+
+    const workspace = document.getElementById('details');
+    const name = document.createElement('p');
+    const type = document.createElement('p');
+    const seating = document.createElement('p');
+    const availibility = document.createElement('p');
+    const lease = document.createElement('p');
+    const price = document.createElement('p');
+    const smoking = document.createElement('p');
+    const nameText = document.createTextNode('Name: ' + workspaceDetails[0].name);
+    const typeText = document.createTextNode('Type: ' + workspaceDetails[0].type);
+    const seatingText = document.createTextNode('Seating: ' + workspaceDetails[0].seating);
+    const availibilityText = document.createTextNode('Availibility Date: ' + workspaceDetails[0].availibility);
+    const leaseText = document.createTextNode(`Lease: ${workspaceDetails[0].leaseTerm} ${workspaceDetails[0].lease}${parseInt(workspaceDetails[0].leaseTerm) > 1 ? 's' : ''}`);
+    const priceText = document.createTextNode('Price: ' + workspaceDetails[0].price);
+    const smokingText = document.createTextNode(`Smoking: ${workspaceDetails[0].smoking == 'true' ? 'isAllowed' : 'isNotAllowed'}`);
+    const property = document.getElementById('property-details');
+    const address = document.createElement('p');
+    const neighborhood = document.createElement('p');
+    const sqft = document.createElement('p');
+    const parking = document.createElement('p');
+    const transportation = document.createElement('p');
+    const addressText = document.createTextNode('Address: ' + propertyDetails[0].address);
+    const neighborhoodText = document.createTextNode('Neighborhood: ' + propertyDetails[0].neighborhood);
+    const sqftText = document.createTextNode('Square Feet: ' + propertyDetails[0].squarefeet);
+    const parkingText = document.createTextNode(`Parking Garage:   ${propertyDetails[0].parking == true ? 'Yes' : 'No'}`);
+    const transportationText = document.createTextNode(`Accessible to Public Transportation: ${propertyDetails[0].transportation == true ? 'Yes' : 'No'}`);
+    const owner = document.getElementById('owner-details');
+    const userName = document.createElement('p');
+    const email = document.createElement('p');
+    const phoneNumber = document.createElement('p');
+    const userNameText = document.createTextNode('Name: ' + userDetails[0].name);
+    const emailText = document.createTextNode(
+      'Email: ' + userDetails[0].email
+    );
+    const phoneNumberText = document.createTextNode('Phone Number: ' + userDetails[0].phoneNumber);
+    name.appendChild(nameText);
+    workspace.appendChild(name);
+    type.appendChild(typeText);
+    workspace.appendChild(type);
+    seating.appendChild(seatingText);
+    workspace.appendChild(seating);
+    availibility.appendChild(availibilityText);
+    workspace.appendChild(availibility);
+    lease.appendChild(leaseText);
+    workspace.appendChild(lease);
+    price.appendChild(priceText);
+    workspace.appendChild(price);
+    smoking.appendChild(smokingText);
+    workspace.appendChild(smoking);
+    address.appendChild(addressText);
+    property.appendChild(address);
+    neighborhood.appendChild(neighborhoodText);
+    property.appendChild(neighborhood);
+    sqft.appendChild(sqftText);
+    property.appendChild(sqft);
+    parking.appendChild(parkingText);
+    property.appendChild(parking);
+    transportation.appendChild(transportationText);
+    property.appendChild(transportation);
+    userName.appendChild(userNameText);
+    owner.appendChild(userName);
+    email.appendChild(emailText);
+    owner.appendChild(email);
+    phoneNumber.appendChild(phoneNumberText);
+    owner.appendChild(phoneNumber);
+}).catch(err => {
+  console.error("error: ", err);
+});
+});
+});
+
+    
+
+
+function LoggedIn(data) {
+    if (Object.keys(data).length == 0) {
+      return false;
+    } else return true;
+  }
+  
+  function asOwner(data) {
+    if (data.role == 'owner') {
+      return true;
+    } else return false;
+  }
+  function asCoworker(data) {
+    if (data.role == 'Co-Worker') {
+      return true;
+    } else return false;
+  }
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+function create(data) {
+  if (LoggedIn(data)) {
+  if (!asCoworker(data)) {
+    window.location.href = 'index_main.html';
+  }
+} else {
+  window.location.href = 'index_main.html';
+}
+  if (LoggedIn(data)) {
+    if (asOwner(data)) {
+      navBar('Home', "/");
+      navBar('Add New', "/property_addition");
+      navBar('My Properties', "/properties_main");
+      navBar('My Workspaces', "/workspace_main" + (JSON.parse(localStorage.getItem('user')).name));
+    } else {
+      navBar('Home', "/");
+      navBar('All Workspaces', "/workspace02_main");
+      navBar('search-area', "/find_main");
+    }
+    navBar('Sign Out', "/signOut_main");
+  } else {
+    navBar('Home', "/");
+    navBar('Signup', '/signIn_main');
+    navBar('Login', "/login_main");
+
+  }
+};
+getLogin("/user.json").then(data => {
+  login = data;
+  create(data)
+}).catch(err => {
+  console.error("error: ", err);
+});
+
+  </script>
+</html>

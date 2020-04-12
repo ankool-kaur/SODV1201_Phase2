@@ -1,0 +1,440 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+  
+   
+  </head>
+  <body>
+
+    <header>
+      <h1>CO - WORKERS</h1>
+      <nav id ="navbar">
+         
+        </nav>
+  </header>
+
+   
+      <section class="main">
+        <h3>All Workspaces</h3>
+        <table id="workspaces">
+          <tr id = 'r1'>
+            <th>Name</th>
+          </tr>
+          <tr id = 'r2'>
+            <th>Type</th>
+          </tr>
+          <tr id = 'r3'>
+            <th>Seating Capacity</th>
+          </tr>
+          <tr id = 'r4'>
+            <th>Availibility</th>
+          </tr>
+          <tr id = 'r5'>
+            <th>Lease Term</th>
+          </tr>
+          <tr id = 'r6'>
+            <th>Rate</th>
+          </tr>
+          <tr id = 'r7'>
+            <th>Smoking</th>
+          </tr>
+          <tr id = 'r8'>
+            <th>View</th>
+          </tr>
+        </table>
+      </section>
+ 
+
+      <footer>
+        <p id = dateTime></p>
+        &copy; 2020, Co-Workers : Made by Ankool Kaur.
+      </footer>
+
+    <script>
+      window.onload = showTime();
+        function showTime(){
+        let time = new Date().toLocaleTimeString();
+        let date = new Date().toLocaleDateString()
+        document.getElementById("dateTime").innerHTML = time + " " + date
+        setTimeout(showTime, 100);
+      };
+
+      function getLogin(url) {
+  return new Promise((resolve, reject) => {
+      return fetch(url).then(function(response) {
+          const json = response.json();
+          if (json) {
+              resolve(json);
+          } 
+          else {
+              reject({ message: "Error" });
+          }
+      });
+  });
+}
+
+getLogin("/workspaces.json").then(data => {
+  getLogin("/properties.json").then(data2 => {
+  const urltext = new URLSearchParams(window.location.search);
+       const param = urltext.get('question').toLowerCase();
+       const filter = urltext.get('filter');
+       const workspaceStorage = data.filter(function(workspace){
+         if (workspace.visibility != undefined){
+           return workspace
+         }
+       })
+
+      if (workspaceStorage) {
+        let SpacesArray = [];
+        if (filter == 'address') {
+          if (param.length > 0) {
+            const search = new RegExp(`^${param}.*$`);
+            const addProperties = data2
+            const propertySelection = addProperties.filter(function(property) {
+              if (
+                property.address.toLowerCase().match(search) !== null &&
+                property.visibility != undefined
+              ) {
+                return property;
+              }
+            });
+            for (i = 0; i < propertySelection.length; i++) {
+              arr = workspaceStorage.filter(function(workspace) {
+                if (workspace.propertyId == propertySelection[i].id) {
+                  return workspace;
+                }
+              });
+              if (arr.length > 0) {
+                for (j = 0; j < arr.length; j++) {
+                  SpacesArray.push(arr[j]);
+                }
+              }
+            }
+          } 
+          else {
+            window.location.href = 'find_main.html';
+          }
+        } else if (filter == 'neighborhood') {
+          if (param.length > 0) {
+            let search = new RegExp(`^${param}.*$`);
+            let addProperties = data2
+
+            let propertySelection = addProperties.filter(function(property) {
+              if (
+                property.neighborhood.toLowerCase().match(search) !== null &&
+                property.visibility != undefined
+              ) {
+                return property;
+              }
+            });
+            for (i = 0; i < propertySelection.length; i++) {
+              arr = workspaceStorage.filter(function(workspace) {
+                if (workspace.propertyId == propertySelection[i].id) {
+                  return workspace;
+                }
+              });
+              if (arr.length > 0) {
+                for (j = 0; j < arr.length; j++) {
+                  SpacesArray.push(arr[j]);
+                }
+              }
+            }
+          } else {
+            window.location.href = 'find_main.html';
+          }
+        } else if (filter == 'sq-ft') {
+          if (param.length > 0) {
+            let addProperties = data2
+
+            let propertySelection = addProperties.filter(function(property) {
+              if (
+                property.squarefeet === param.toString() &&
+                property.visibility != undefined
+              ) {
+                return property;
+              }
+            });
+            for (i = 0; i < propertySelection.length; i++) {
+              arr = workspaceStorage.filter(function(workspace) {
+                if (workspace.propertyId == propertySelection[i].id) {
+                  return workspace;
+                }
+              });
+              if (arr.length > 0) {
+                for (j = 0; j < arr.length; j++) {
+                  SpacesArray.push(arr[j]);
+                }
+              }
+            }
+          } else {
+            window.location.href = 'find_main.html';
+          }
+        } else if (filter == 'parkingAllowed') {
+          let addProperties = data2
+
+          let propertySelection = addProperties.filter(function(property) {
+            if (
+              property.parking == true &&
+              property.visibility != undefined
+            ) {
+              return property;
+            }
+          });
+          for (i = 0; i < propertySelection.length; i++) {
+            arr = workspaceStorage.filter(function(workspace) {
+              if (workspace.propertyId == propertySelection[i].id) {
+                return workspace;
+              }
+            });
+            if (arr.length > 0) {
+              for (j = 0; j < arr.length; j++) {
+                SpacesArray.push(arr[j]);
+              }
+            }
+          }
+        } else if (filter == 'parkingNotAllowed') {
+          let addProperties = data2
+
+          let propertySelection = addProperties.filter(function(property) {
+            if (
+              property.parking != true &&
+              property.visibility != undefined
+            ) {
+              return property;
+            }
+          });
+          for (i = 0; i < propertySelection.length; i++) {
+            arr = workspaceStorage.filter(function(workspace) {
+              if (workspace.propertyId == propertySelection[i].id) {
+                return workspace;
+              }
+            });
+            if (arr.length > 0) {
+              for (j = 0; j < arr.length; j++) {
+                SpacesArray.push(arr[j]);
+              }
+            }
+          }
+        } else if (filter == 'transportationIs') {
+          let addProperties = data2
+
+          let propertySelection = addProperties.filter(function(property) {
+            if (
+              property.transportation == true &&
+              property.visibility != undefined
+            ) {
+              return property;
+            }
+          });
+          for (i = 0; i < propertySelection.length; i++) {
+            arr = workspaceStorage.filter(function(workspace) {
+              if (workspace.propertyId == propertySelection[i].id) {
+                return workspace;
+              }
+            });
+            if (arr.length > 0) {
+              for (j = 0; j < arr.length; j++) {
+                SpacesArray.push(arr[j]);
+              }
+            }
+          }
+        } else if (filter == 'transportationIsNot') {
+          let addProperties = data2
+          let propertySelection = addProperties.filter(function(property) {
+            if (
+              property.transportation != true &&
+              property.visibility != undefined
+            ) {
+              return property;
+            }
+          });
+          for (i = 0; i < propertySelection.length; i++) {
+            arr = workspaceStorage.filter(function(workspace) {
+              if (workspace.propertyId == propertySelection[i].id) {
+                return workspace;
+              }
+            });
+            if (arr.length > 0) {
+              for (j = 0; j < arr.length; j++) {
+                SpacesArray.push(arr[j]);
+              }
+            }
+          }
+        } else if (filter == 'seats') {
+          if (param.length > 0) {
+            SpacesArray = workspaceStorage.filter(function(workspace) {
+              if (
+                workspace.seating === param.toString() &&
+                workspace.visibility != undefined
+              ) {
+                return workspace;
+              }
+            });
+          } else {
+            window.location.href = 'find_main.html';
+          }
+        } else if (filter == 'smokingIs') {
+          SpacesArray = workspaceStorage.filter(function(workspace) {
+            if (workspace.smoking != undefined && workspace.visibility != undefined) {
+              return workspace;
+            }
+          });
+        } else if (filter == 'smokingIsNot') {
+          SpacesArray = workspaceStorage.filter(function(workspace) {
+            if (workspace.smoking == undefined && workspace.visibility != undefined) {
+              return workspace;
+            }
+          });
+        } else if (filter == 'dateAvailable') {
+          if (param.length > 0) {
+            SpacesArray = workspaceStorage.filter(function(workspace) {
+              if (
+                workspace.availibility === param.toString() &&
+                workspace.visibility != undefined
+              ) {
+                return workspace;
+              }
+            });
+          } else {
+            window.location.href = 'find_main.html';
+          }
+        } else if (filter == 'leaseTerm') {
+          if (param.length > 0) {
+            SpacesArray = workspaceStorage.filter(function(workspace) {
+              if (
+                workspace.leaseTerm === param.toString() &&
+                workspace.visibility != undefined
+              ) {
+                return workspace;
+              }
+            });
+          } else {
+            window.location.href = 'find_main.html';
+          }
+        } else if (filter == 'price') {
+          if (param.length > 0) {
+            SpacesArray = workspaceStorage.filter(function(workspace) {
+              if (
+                workspace.price === param.toString() &&
+                workspace.visibility != undefined
+              ) {
+                return workspace;
+              }
+            });
+          } else {
+            window.location.href = 'find_main.html';
+          }
+        }
+
+        for (i = 0; i < SpacesArray.length; i++) {
+          const current = SpacesArray[i];
+          const table = document.getElementById('workspaces');
+          const nameText = document.createTextNode(current.name);
+          const typeText = document.createTextNode(current.type);
+          const seatingText = document.createTextNode(current.seating);
+          const availibilityText = document.createTextNode(current.availibility);
+          const leaseText = document.createTextNode(`${current.leaseTerm} ${current.lease}${parseInt(current.leaseTerm) > 1 ? 's' : ''}`);
+          const priceText = document.createTextNode(current.price);
+          const smokingText = document.createTextNode(current.smoking ? 'isAllowed' : 'isNotAllowed');
+          const name = document.createElement('td');
+          const type = document.createElement('td');
+          const seats = document.createElement('td');
+          const date = document.createElement('td');
+          const lease = document.createElement('td');
+          const price = document.createElement('td');
+          const smoking = document.createElement('td');
+          const linkNode = document.createElement('td');
+          const link = document.createElement('a');
+          const linkText = document.createTextNode('View Details');
+          const r1 = document.getElementById('r1');
+          const r2 = document.getElementById('r2');
+          const r3 = document.getElementById('r3');
+          const r4 = document.getElementById('r4');
+          const r5 = document.getElementById('r5');
+          const r6 = document.getElementById('r6');
+          const r7 = document.getElementById('r7');
+          const r8 = document.getElementById('r8');
+          name.appendChild(nameText);
+          r1.appendChild(name);
+          type.appendChild(typeText);
+          r2.appendChild(type);
+          seats.appendChild(seatingText);
+          r3.appendChild(seats);
+          date.appendChild(availibilityText);
+          r4.appendChild(date);
+          lease.appendChild(leaseText);
+          r5.appendChild(lease);
+          price.appendChild(priceText);
+          r6.appendChild(price);
+          smoking.appendChild(smokingText);
+          r7.appendChild(smoking);
+          link.setAttribute('href',`workspace01_main.html?workspaceId=${current.idnum2}&propertyId=${current.idnum}`);
+          link.appendChild(linkText);
+          linkNode.appendChild(link);
+          r8.appendChild(linkNode);
+        }
+      }
+}).catch(err => {
+  console.error("error: ", err);
+});
+});
+
+       
+
+function LoggedIn(data) {
+    if (Object.keys(data).length == 0) {
+      return false;
+    } else return true;
+  }
+  
+  function asOwner(data) {
+    if (data.role == 'owner') {
+      return true;
+    } else return false;
+  }
+  function asCoworker(data) {
+    if (data.role == 'Co-Worker') {
+      return true;
+    } else return false;
+  }
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+ function create(data) {
+  if (LoggedIn(data)) {
+    if (asOwner(data)) {
+      navBar('Home', "/");
+      navBar('Add New', "/property_addition");
+      navBar('My Properties', "/properties_main");
+      navBar('My Workspaces', "/workspace_main"+ (JSON.parse(localStorage.getItem('user')).name));
+    } else {
+      navBar('Home', "/");
+      navBar('All Workspaces', "/workspace02_main");
+      navBar('search-area', "/find_main");
+    }
+    navBar('Sign Out', "/signOut_main");
+  } else {
+    navBar('Home', "/");
+    navBar('Signup', "/signIn_main");
+    navBar('Login', "/login_main");
+
+  }
+};
+getLogin("/user.json").then(data => {
+  login = data;
+  create(data)
+}).catch(err => {
+  console.error("error: ", err);
+});
+
+    </script>
+  </body>
+</html>

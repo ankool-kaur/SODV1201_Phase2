@@ -1,0 +1,237 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+ 
+  
+  </head>
+  <body>
+
+    <header>
+      <h1>CO - WORKERS</h1>
+      <nav id ="navbar">
+          
+        </nav>
+  </header>
+  
+<section class="main">
+  <h3>Your Properties</h3>
+  <table id="properties">
+    <tr id = "r1">
+    <th>Address</th>
+    </tr>
+    <tr id = "r2">
+      <th>Neighborhood</th>
+    </tr>
+    <tr id = "r3">
+      <th>Square Feet</th>
+    </tr>
+    <tr id = "r4">
+      <th>Parking Garage</th>
+    </tr>
+    <tr id ="r5">
+      <th>Public Transport is Accessible</th>
+    </tr>
+    <tr id = "r6">
+      <th>Workspaces</th>
+    </tr>
+    <tr id = "r7">
+      <th>Edit</th>
+    </tr>
+    <tr id ="r8">
+      <th></th>
+    </tr>
+    
+  </table>
+</section>
+
+<footer>
+  <p id = dateTime></p>
+  &copy; 2020, Co-Workers : Made by Ankool Kaur.
+</footer>
+
+<script>
+window.onload = showTime();
+function showTime(){
+  let time = new Date().toLocaleTimeString();
+  let date = new Date().toLocaleDateString()
+  document.getElementById("dateTime").innerHTML = time + " " + date
+  setTimeout(showTime, 100);
+};
+
+function getLogin(url) {
+  return new Promise((resolve, reject) => {
+      return fetch(url).then(function(response) {
+          const json = response.json();
+          if (json) {
+              resolve(json);
+          } 
+          else {
+              reject({ message: "Error" });
+          }
+      });
+  });
+}
+
+getLogin("/properties.json").then(properties => {
+  getLogin("/user.json").then(user =>{
+    show(properties, user);
+  })
+  
+}).catch(err => {
+  console.error("error: ", err);
+});
+
+
+function show(properties, user){
+const email = user.email;
+if (email && properties) {
+  propertiesObj = []
+  for(i = 0; i < properties.length; i++){
+    if(properties[i].owner == email){
+      propertiesObj.push(properties[i]);
+    }
+  }
+  for (i = 0; i <  propertiesObj.length; i++) {
+    const propertyOwn =  propertiesObj[i];
+    let view = "";
+    if (propertyOwn.visibility == undefined){
+      propertyOwn.visibility = false
+    }
+    else{
+      propertyOwn.visibility = true;
+    }
+    const propertyTable = document.getElementById('properties');
+    const addressText = document.createTextNode(propertyOwn.address);
+    const neighborhoodText = document.createTextNode(propertyOwn.neighborhood);
+    const sqfeetText = document.createTextNode(propertyOwn.squarefeet);
+    const isParkingText = document.createTextNode(propertyOwn.parking ? 'Yes' : 'No');
+    const transportationText = document.createTextNode(propertyOwn.transportation ? 'Yes' : 'No');
+    const address = document.createElement('td');
+    const neighborhood = document.createElement('td');
+    const sqfeet = document.createElement('td');
+    const isParking = document.createElement('td');
+    const transportation = document.createElement('td');
+    const workspaces = document.createElement('td');
+    const editLinkColumn = document.createElement('td');
+    const buttonListColumn = document.createElement('td');
+    const r1 = document.getElementById("r1");
+    const r2 = document.getElementById("r2");
+    const r3 = document.getElementById("r3");
+    const r4 = document.getElementById("r4");
+    const r5 = document.getElementById("r5");
+    const r6 = document.getElementById("r6");
+    const r7 = document.getElementById("r7");
+    const r8 = document.getElementById("r8");
+    address.appendChild(addressText);
+    r1.appendChild(address);
+    neighborhood.appendChild(neighborhoodText);
+    r2.appendChild(neighborhood)
+    sqfeet.appendChild(sqfeetText);
+    r3.appendChild(sqfeet);
+    isParking.appendChild(isParkingText);
+    r4.appendChild(isParking);
+    transportation.appendChild(transportationText);
+    r5.appendChild(transportation);
+    const showLink = document.createElement('a');
+    const showLinkText = document.createTextNode('');
+    showLink.appendChild(showLinkText);
+    const addLink = document.createElement('a');
+    const addLinkText = document.createTextNode('Add');
+    addLink.setAttribute('href', 'workspace_addition.html?id=' + propertyOwn.idnum);
+    workspaces.appendChild(showLink);
+    workspaces.appendChild(addLink);
+    addLink.appendChild(addLinkText);
+    r6.appendChild(workspaces);
+    const editLink = document.createElement('a');
+    const editLinkText = document.createTextNode('Edit');
+    editLink.setAttribute('href',`property_editing.html?id=${propertyOwn.idnum}&address=${propertyOwn.address}&neighborhood=${propertyOwn.neighborhood}&sqft=${propertyOwn.squarefeet}&parking=${propertyOwn.parking}&transportation=${propertyOwn.transportation}&visibility=${propertyOwn.visibility}`);
+    editLink.appendChild(editLinkText);
+    editLinkColumn.appendChild(editLink);
+    r7.appendChild(editLinkColumn);
+    const buttonList = document.createElement('button');
+    const buttonListText = document.createTextNode(propertyOwn.visibility.toString() == 'true' ? 'Un-list' : 'List');buttonList.setAttribute('onClick',`display(${propertyOwn.visibility}, ${propertyOwn.idnum})`);buttonList.setAttribute('style',`cursor: pointer; background: ${propertyOwn.visibility.toString() == 'true' ? '#f515d7' : '#00D191'}`);
+    buttonList.appendChild(buttonListText);
+    buttonListColumn.appendChild(buttonList);
+    r8.appendChild(buttonListColumn);
+  }
+};
+    
+}
+
+function display(v, i) {
+  const url = "/pList";
+      const params = `visibility=${v}&idnum=${i}`
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.responseType = 'json';
+      xhr.send(params);
+      window.location.href = 'properties_main.html';
+  }
+
+  function LoggedIn(data) {
+    if (Object.keys(data).length == 0) {
+      return false;
+    } else return true;
+  }
+  
+  function asOwner(data) {
+    if (data.role == 'owner') {
+      return true;
+    } else return false;
+  }
+  function asCoworker(data) {
+    if (data.role == 'Co-Worker') {
+      return true;
+    } else return false;
+  }
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+ function create(data) {
+  if (LoggedIn(data)) {
+    if (!asOwner(data)) {
+      window.location.href = 'index_main.html';
+    }
+  } else {
+    window.location.href = 'index_main.html';
+  }
+  if (LoggedIn(data)) {
+    if (asOwner(data)) {
+      navBar('Home', "/");
+      navBar('Add New', "/property_addition");
+      navBar('My Properties', "/properties_main");
+      navBar('My Workspaces', "/workspace_main");
+    } else {
+      navBar('Home', "/");
+      navBar('All Workspaces', "/workspace02_main");
+      navBar('search-area', '/find_main');
+    }
+    navBar('Sign Out', '/signOut_main');
+  } else {
+    navBar('Home', "/");
+    navBar('Signup', "/signIn_main");
+    navBar('Login', "/login_main");
+
+  }
+};
+getLogin("/user.json").then(data => {
+  const email = data.email;
+  login = data;
+  create(data)
+}).catch(err => {
+  console.error("error: ", err);
+});
+
+    
+</script>
+  </body>
+</html>
